@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>The Boys' Brigade Nigeria</title>
+  <meta name="description" content="Learn the Boys' Brigade: ranks, uniform, history and drill. Find a company near you in Nigeria.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@75..100,500..800&family=Source+Serif+4:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+  <a class="skip-link" href="#content">Skip to content</a>
+
+  <header class="site-header">
+    <div class="wrap header-row">
+      <a class="brand" href="#top">
+        <img class="brand-logo" src="bb-logo.png" alt="Boys' Brigade logo" width="48" height="48"
+             onerror="this.hidden=true;this.nextElementSibling.hidden=false;">
+        <span class="brand-mark" aria-hidden="true" hidden>BB</span>
+        <span class="brand-text">
+          The Boys' Brigade Nigeria
+          <small>Sure and Steadfast</small>
+        </span>
+      </a>
+
+      <button class="menu-toggle" aria-expanded="false" aria-controls="main-nav">Menu</button>
+
+      <nav id="main-nav" class="main-nav" aria-label="Main">
+        <ul>
+          <li><a href="#join">Join</a></li>
+          <li><a href="#about">About</a></li>
+          <li><a href="#learn">Learn</a></li>
+          <li><a href="#resources">Drill manual</a></li>
+          <li><a href="#contact">Contact</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <div class="mode-bar">
+    <div class="wrap mode-row">
+      <span class="mode-label">Reading level</span>
+      <div class="mode-switch" role="group" aria-label="Reading level">
+        <button type="button" data-mode="kids" aria-pressed="true">Kids</button>
+        <button type="button" data-mode="leaders" aria-pressed="false">Leaders</button>
+      </div>
+    </div>
+  </div>
+
+  <main id="content">
+
+    <!-- ======================= HOME ======================= -->
+    <div id="home">
+
+      <section id="top" class="hero">
+        <div class="wrap hero-grid">
+          <div class="hero-copy">
+            <h1>Fall in with the Boys' Brigade in Nigeria</h1>
+            <p>Learn the ranks, the uniform and the drill. Test yourself, earn your progress and find a company near you.</p>
+            <div class="hero-actions">
+              <a class="btn btn-primary" href="#learn">Start learning</a>
+              <a class="btn btn-ghost" href="#join">Find your section</a>
+            </div>
+          </div>
+
+          <figure class="hero-ranks" id="hero-ranks" aria-label="Two ranks of boys standing at attention">
+            <svg viewBox="0 0 360 240" role="img" aria-label="Black and white figures of boys in two ranks" style="width:100%;height:auto;display:block;">
+              <defs>
+                <symbol id="boy" viewBox="0 0 40 120">
+                  <path d="M11 13 Q20 1 29 13 L29 16 L11 16 Z" fill="currentColor"/>
+                  <circle cx="20" cy="23" r="7" fill="currentColor"/>
+                  <path d="M9 33 Q20 28 31 33 L32 72 L8 72 Z" fill="currentColor"/>
+                  <rect x="3" y="34" width="6" height="36" rx="3" fill="currentColor"/>
+                  <rect x="31" y="34" width="6" height="36" rx="3" fill="currentColor"/>
+                  <rect x="10" y="72" width="9" height="40" rx="2" fill="currentColor"/>
+                  <rect x="21" y="72" width="9" height="40" rx="2" fill="currentColor"/>
+                  <ellipse cx="14" cy="114" rx="8" ry="4" fill="currentColor"/>
+                  <ellipse cx="26" cy="114" rx="8" ry="4" fill="currentColor"/>
+                  <path d="M12 33 L28 66" stroke="#F6F5F0" stroke-width="3" fill="none"/>
+                  <rect x="9" y="64" width="22" height="3" fill="#F6F5F0"/>
+                </symbol>
+              </defs>
+
+              <rect width="360" height="240" fill="#F6F5F0"/>
+
+              <g style="color:#8C8C8C">
+                <use class="marcher" href="#boy" x="12"  y="8" width="36" height="108"/>
+                <use class="marcher" href="#boy" x="70"  y="8" width="36" height="108"/>
+                <use class="marcher" href="#boy" x="128" y="8" width="36" height="108"/>
+                <use class="marcher" href="#boy" x="186" y="8" width="36" height="108"/>
+                <use class="marcher" href="#boy" x="244" y="8" width="36" height="108"/>
+                <use class="marcher" href="#boy" x="302" y="8" width="36" height="108"/>
+              </g>
+
+              <g style="color:#111111">
+                <use class="marcher" href="#boy" x="12"  y="124" width="36" height="108"/>
+                <use class="marcher" href="#boy" x="70"  y="124" width="36" height="108"/>
+                <use class="marcher" href="#boy" x="128" y="124" width="36" height="108"/>
+                <use class="marcher" href="#boy" x="186" y="124" width="36" height="108"/>
+                <use class="marcher" href="#boy" x="244" y="124" width="36" height="108"/>
+                <use class="marcher" href="#boy" x="302" y="124" width="36" height="108"/>
+              </g>
+            </svg>
+            <figcaption>Two ranks, two paces apart, each boy covering the one in front.</figcaption>
+          </figure>
+        </div>
+      </section>
+
+      <section id="learn" class="section">
+        <div class="wrap">
+          <h2>Learn the Brigade</h2>
+          <p class="lead">Pick a topic, read it, then test yourself. Switch between Kids and Leaders at the top of the page to change how much detail you see.</p>
+
+          <div class="progress" id="progress" aria-live="polite">
+            <p class="progress-text"><strong id="progress-count">0</strong> of <strong id="progress-total">3</strong> topics learned</p>
+            <div class="progress-track"><div class="progress-fill" id="progress-fill"></div></div>
+          </div>
+
+          <ul class="resource-links">
+            <li><a href="#learn-ranks" data-topic="ranks">Ranks<span>From Lance Corporal to Staff Sergeant, and the officers who lead the company</span></a></li>
+            <li><a href="#learn-uniform" data-topic="uniform">Uniform<span>Tap each part of the uniform to learn its name and what it means</span></a></li>
+            <li><a href="#learn-history" data-topic="history">History<span>The first company, the anchor and cross, and our motto</span></a></li>
+            <li><a href="#learn-quiz">Timed test<span>Ten questions against the clock, with a leaderboard</span></a></li>
+            <li><a href="#learn-flashcards">Flashcards<span>Flip through the key facts to remember them</span></a></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="join" class="section section-tint">
+        <div class="wrap">
+          <h2>Join a section</h2>
+          <p class="lead">Every boy has a place. Pick the age group and your nearest company will tell you when parade night is.</p>
+
+          <ul class="sections-list">
+            <li>
+              <h3>Younger boys</h3>
+              <p class="age">Ages 5 to 8</p>
+              <p>Games, songs, simple Bible stories and the first steps of drill.</p>
+            </li>
+            <li>
+              <h3>Juniors</h3>
+              <p class="age">Ages 8 to 12</p>
+              <p>Full squad drill, badge work, sports and camps with their company.</p>
+            </li>
+            <li>
+              <h3>Seniors</h3>
+              <p class="age">Ages 12 to 18</p>
+              <p>Leadership, ceremonial parades, community projects and awards.</p>
+            </li>
+            <li>
+              <h3>Leaders</h3>
+              <p class="age">Adults</p>
+              <p>Volunteer to train boys in your church. Training and drill support provided.</p>
+            </li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="about" class="section">
+        <div class="wrap about-grid">
+          <div>
+            <h2>About the Brigade</h2>
+            <p>The Boys' Brigade is a Christian youth movement. Boys meet weekly in a company based at a church, school or community hall. They learn drill and discipline, play sport, earn badges and take part in worship.</p>
+            <p>The aim is simple: to help boys grow into men of character who serve God and their neighbours.</p>
+          </div>
+          <aside class="motto-box">
+            <p class="motto">Sure and Steadfast</p>
+            <p>Our motto comes from Hebrews 6:19 and guides every parade.</p>
+          </aside>
+        </div>
+      </section>
+
+      <section id="resources" class="section section-tint">
+        <div class="wrap">
+          <h2>Drill manual</h2>
+          <p class="lead">Everything an officer needs to run a good parade night. Choose a topic to open it.</p>
+
+          <ul class="resource-links">
+            <li><a href="#squad-drill">Squad drill<span>Falling in, dressing, numbering and marching in line</span></a></li>
+            <li><a href="#basic-movements">Basic drill movements<span>Attention, standing at ease, turning, marching and halting</span></a></li>
+            <li><a href="#colour-drill">Colour drill<span>Carrying and handling the company colours</span></a></li>
+            <li><a href="#learn-uniform">Uniform<span>What boys wear on parade and what each part means</span></a></li>
+          </ul>
+        </div>
+      </section>
+
+      <section id="contact" class="section">
+        <div class="wrap contact-grid">
+          <div>
+            <h2>Contact us</h2>
+          </div>
+
+          <form class="contact-form" id="contact-form">
+            <label for="name">Your name</label>
+            <input id="name" name="name" type="text" required autocomplete="name">
+
+            <label for="email">Email address</label>
+            <input id="email" name="email" type="email" required autocomplete="email">
+
+            <label for="message">Message</label>
+            <textarea id="message" name="message" rows="4" required></textarea>
+
+            <button class="btn btn-primary" type="submit">Send message</button>
+            <p class="form-status" id="form-status" role="status"></p>
+          </form>
+        </div>
+      </section>
+
+    </div>
+
+    <!-- ======================= LEARN PAGES ======================= -->
+
+    <!-- Ranks -->
+    <article class="view section" id="learn-ranks" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#learn">Back to Learn</a>
+        <h1 class="page-title">Ranks</h1>
+        <p class="lead">Boys earn rank by showing they can be trusted. The rank is shown by chevrons, the downward-pointing stripes worn on the armband.</p>
+
+        <h2 class="page-subtitle">Boys' ranks</h2>
+        <div id="ranks-list" class="rank-list"></div>
+
+        <h2 class="page-subtitle">Officers</h2>
+        <p>Officers are the adult leaders of the company.</p>
+        <div id="officers-list" class="rank-list"></div>
+
+        <button type="button" class="btn btn-primary mark-learned" data-topic="ranks">I have learned this</button>
+        <a class="btn btn-outline" href="#learn-quiz">Take the test</a>
+      </div>
+    </article>
+
+    <!-- Uniform -->
+    <article class="view section" id="learn-uniform" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#learn">Back to Learn</a>
+        <h1 class="page-title">Uniform</h1>
+        <p class="lead">Tap any part of the figure, or pick it from the list, to learn its name and what it means.</p>
+
+        <div class="uniform-layout">
+          <figure class="uniform-figure">
+            <svg viewBox="0 0 240 420" role="group" aria-label="Boy in Boys' Brigade uniform. Tap a part to learn about it." style="width:100%;height:auto;display:block;">
+              <rect width="240" height="420" fill="#F6F5F0"/>
+
+              <!-- trousers -->
+              <path d="M62 246 H178 L174 382 H126 L121 280 H119 L114 382 H66 Z" fill="#111111"/>
+
+              <!-- shirt, arms and hands -->
+              <g class="part" data-part="shirt" tabindex="0" role="button" aria-label="Shirt">
+                <path d="M70 112 Q120 100 170 112 L182 250 L58 250 Z" fill="#2B2B2B"/>
+                <rect x="40" y="118" width="22" height="130" rx="11" fill="#2B2B2B"/>
+                <rect x="178" y="118" width="22" height="130" rx="11" fill="#2B2B2B"/>
+                <circle cx="51" cy="254" r="11" fill="#D9D9D9" stroke="#111" stroke-width="2"/>
+                <circle cx="189" cy="254" r="11" fill="#D9D9D9" stroke="#111" stroke-width="2"/>
+                <rect x="110" y="94" width="20" height="18" fill="#D9D9D9"/>
+              </g>
+
+              <!-- haversack -->
+              <g class="part" data-part="haversack" tabindex="0" role="button" aria-label="Haversack">
+                <path d="M72 112 L94 112 L178 244 L156 250 Z" fill="#FFFFFF" stroke="#111" stroke-width="2"/>
+                <rect x="146" y="238" width="42" height="36" rx="3" fill="#FFFFFF" stroke="#111" stroke-width="2"/>
+              </g>
+
+              <!-- lanyard -->
+              <g class="part" data-part="lanyard" tabindex="0" role="button" aria-label="Lanyard">
+                <rect x="134" y="150" width="26" height="24" fill="none" stroke="#888" stroke-width="2"/>
+                <path d="M164 114 Q150 124 146 150" stroke="#FFFFFF" stroke-width="3" fill="none"/>
+              </g>
+
+              <!-- rank armband -->
+              <g class="part" data-part="armband" tabindex="0" role="button" aria-label="Rank armband">
+                <rect x="40" y="136" width="22" height="34" fill="#FFFFFF" stroke="#111" stroke-width="2"/>
+                <path d="M44 146 L51 154 L58 146" stroke="#111" stroke-width="3" fill="none"/>
+                <path d="M44 156 L51 164 L58 156" stroke="#111" stroke-width="3" fill="none"/>
+              </g>
+
+              <!-- belt -->
+              <g class="part" data-part="belt" tabindex="0" role="button" aria-label="Belt">
+                <rect x="58" y="232" width="124" height="14" fill="#8A8A8A" stroke="#111" stroke-width="2"/>
+                <rect x="112" y="230" width="16" height="18" fill="#FFFFFF" stroke="#111" stroke-width="2"/>
+              </g>
+
+              <!-- boots -->
+              <g class="part" data-part="boots" tabindex="0" role="button" aria-label="Boots">
+                <path d="M66 382 H114 V402 Q114 410 104 410 H54 Q54 396 66 382 Z" fill="#000000" stroke="#888" stroke-width="2"/>
+                <path d="M126 382 H174 Q186 396 186 410 H136 Q126 410 126 402 Z" fill="#000000" stroke="#888" stroke-width="2"/>
+              </g>
+
+              <!-- head -->
+              <circle cx="120" cy="72" r="24" fill="#D9D9D9" stroke="#111" stroke-width="3"/>
+
+              <!-- cap -->
+              <g class="part" data-part="cap" tabindex="0" role="button" aria-label="Cap">
+                <path d="M80 40 Q120 8 160 40 L160 54 L80 54 Z" fill="#111111"/>
+                <circle cx="120" cy="38" r="6" fill="#FFFFFF"/>
+              </g>
+            </svg>
+          </figure>
+
+          <div class="uniform-side">
+            <div class="info-panel" id="uniform-info" aria-live="polite">
+              <p class="info-name">Tap a part of the uniform</p>
+              <p class="info-text">Start with the cap, or choose from the list.</p>
+            </div>
+            <ul class="part-buttons" id="uniform-buttons"></ul>
+          </div>
+        </div>
+
+        <button type="button" class="btn btn-primary mark-learned" data-topic="uniform">I have learned this</button>
+        <a class="btn btn-outline" href="#learn-quiz">Take the test</a>
+      </div>
+    </article>
+
+    <!-- History -->
+    <article class="view section" id="learn-history" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#learn">Back to Learn</a>
+        <h1 class="page-title">History</h1>
+        <p class="lead">The Boys' Brigade is the world's first uniformed youth organisation. Here is how it began.</p>
+
+        <ol class="timeline" id="history-list"></ol>
+
+        <button type="button" class="btn btn-primary mark-learned" data-topic="history">I have learned this</button>
+        <a class="btn btn-outline" href="#learn-quiz">Take the test</a>
+      </div>
+    </article>
+
+    <!-- Timed test -->
+    <article class="view section" id="learn-quiz" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#learn">Back to Learn</a>
+        <h1 class="page-title">Timed test</h1>
+        <p class="lead">Ten questions against the clock. Your score and time go on the leaderboard.</p>
+        <div id="quiz-root"></div>
+      </div>
+    </article>
+
+    <!-- Flashcards -->
+    <article class="view section" id="learn-flashcards" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#learn">Back to Learn</a>
+        <h1 class="page-title">Flashcards</h1>
+        <p class="lead">Read the question, say the answer out loud, then flip the card to check.</p>
+        <div id="flash-root"></div>
+      </div>
+    </article>
+
+    <!-- ======================= DRILL PAGES ======================= -->
+
+    <!-- Squad drill: topic list -->
+    <article class="view section" id="squad-drill" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#resources">Back to drill manual</a>
+        <h1 class="page-title">Squad drill</h1>
+        <p class="lead">How an instructor forms up a squad and keeps it in line. This is a simplified guide, so check it against your Brigade's official drill manual. Choose a topic to open it.</p>
+
+        <ul class="resource-links">
+          <li><a href="#drill-falling-in">Falling in<span>Forming the squad in ranks behind the marker</span></a></li>
+          <li><a href="#drill-blank-file">The blank file<span>What happens when the numbers are odd</span></a></li>
+          <li><a href="#drill-dressing">Dressing and covering<span>Getting the lines straight</span></a></li>
+          <li><a href="#drill-intervals">Dressing with intervals<span>Spacing the boys an arm's length apart</span></a></li>
+          <li><a href="#drill-numbering">Numbering<span>Giving every boy his number</span></a></li>
+          <li><a href="#drill-proving">Proving<span>Picking out one boy by number</span></a></li>
+          <li><a href="#drill-marching">Marching in line<span>Advancing together and keeping in line</span></a></li>
+          <li><a href="#drill-retiring">Retiring<span>Turning about and marching away</span></a></li>
+          <li><a href="#drill-inclining">Inclining<span>Moving diagonally and straightening up</span></a></li>
+          <li><a href="#drill-obstacles">Obstacles<span>Halting safely in front of a wall or barrier</span></a></li>
+        </ul>
+      </div>
+    </article>
+
+    <article class="view section" id="drill-falling-in" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#squad-drill">Back to squad drill</a>
+        <h1 class="page-title">Falling in</h1>
+        <p class="command">SQUAD, MARKER TAKE—POST, FALL—IN</p>
+        <p>A squad of 4 to 10 boys forms in one rank, 8 to 20 boys in two ranks, and 16 or more in three ranks. These steps are for two ranks.</p>
+        <ol class="steps">
+          <li>The boys wait to one side at stand easy. On the command <strong>SQUAD</strong> they stand at ease.</li>
+          <li>On <strong>MARKER TAKE—POST</strong>, the marker (usually the tallest boy) comes to attention, waits four quick paces, then marches out and halts two paces from the instructor. He turns to face the instructor and stands at ease.</li>
+          <li>On <strong>FALL—IN</strong>, everyone including the marker comes to attention, waits four quick paces and marches to the marker.</li>
+          <li>Boys take their places in turn from the right, front rank and rear rank alternately. Each boy takes about 60cm of space.</li>
+          <li>A rear rank boy stands two paces behind his front rank boy, measured heel to heel, and covers him exactly.</li>
+          <li>Each boy turns his head and eyes to the right to check his line. Rear rank boys also check their covering.</li>
+          <li>When the first file is satisfied, those boys stand at ease, then each following file does the same in turn from the right, turning heads and eyes to the front as they do.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="view section" id="drill-blank-file" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#squad-drill">Back to squad drill</a>
+        <h1 class="page-title">The blank file</h1>
+        <p class="command">Odd numbers in the squad</p>
+        <p>A file is one front rank boy with the rear rank boy behind him. When the squad has an odd number of boys, one file has only a front rank boy.</p>
+        <ol class="steps">
+          <li>The blank file is always in the front rank.</li>
+          <li>The boy in the blank file stays a member of the front rank for as long as it is the front rank.</li>
+          <li>When the squad turns about, the rear rank becomes the front rank. At the halt, the boy in the blank file takes two paces forward after turning, so he is back in the front rank.</li>
+          <li>On the march, he marks time for two paces on the command ABOUT after taking one check pace, then turns about with everyone else.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="view section" id="drill-dressing" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#squad-drill">Back to squad drill</a>
+        <h1 class="page-title">Dressing and covering</h1>
+        <p class="command">RIGHT—DRESS, then EYES—FRONT</p>
+        <p>Dressing means getting the ranks into a straight line. Covering means each rear rank boy standing exactly behind the boy in front.</p>
+        <ol class="steps">
+          <li>On <strong>RIGHT—DRESS</strong>, every front rank boy except the one on the right flank turns his head and eyes to the right.</li>
+          <li>Each boy moves with short, quick steps until he can just see the lower part of the face of the second boy beyond him.</li>
+          <li>He moves his body with his feet, forwards, backwards or sideways, and keeps his shoulders square to the front.</li>
+          <li>Each boy takes up one space, about 60cm.</li>
+          <li>Rear rank boys do the same. The rear rank boy on the right flank stands two paces behind his front rank boy, and the rest cover the boys in front of them.</li>
+          <li>When everyone is in line, the command <strong>EYES—FRONT</strong> turns heads and eyes smartly to the front.</li>
+          <li>To dress to the left, the command is <strong>LEFT—DRESS</strong> and heads turn left.</li>
+        </ol>
+        <h2 class="page-subtitle">Dressing while moving</h2>
+        <p>When marching or marking time, boys correct their dressing and covering by themselves. After the command <strong>SQUAD—HALT</strong>, the squad dresses again only on the word of command. If the line goes out of alignment on the march, the command <strong>BY THE RIGHT</strong> (or LEFT) tells boys to glance to that flank and correct. <strong>SQUAD—COVER</strong> is the command to correct covering and distance.</p>
+      </div>
+    </article>
+
+    <article class="view section" id="drill-intervals" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#squad-drill">Back to squad drill</a>
+        <h1 class="page-title">Dressing with intervals</h1>
+        <p class="command">WITH INTERVALS RIGHT—DRESS</p>
+        <p>This gives each boy an arm's length of space, used for inspections and for drills that need room.</p>
+        <ol class="steps">
+          <li>Each front rank boy except those on the right flank turns his head to the right and raises his right arm, back of the hand upwards, fist clenched, until it touches the shoulder of the boy on his right.</li>
+          <li>He moves with short quick steps and gradually straightens his arm until he is level with the boy on his right and at the right interval.</li>
+          <li>His shoulders stay square to the front.</li>
+          <li>The right-hand boy of the rear rank raises his right arm forward and adjusts his distance until his fist touches the shoulder of the boy in front of him.</li>
+          <li>The rest of the rear rank turn their heads right and cover the front rank boys.</li>
+          <li>On <strong>EYES—FRONT</strong>, heads and eyes turn to the front and arms come down silently to the side.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="view section" id="drill-numbering" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#squad-drill">Back to squad drill</a>
+        <h1 class="page-title">Numbering</h1>
+        <p class="command">SQUAD—NUMBER</p>
+        <ol class="steps">
+          <li>Only the front rank calls out. They count from right to left in an even tone: ONE, TWO, THREE and so on.</li>
+          <li>The right-hand boy calls ONE.</li>
+          <li>Heads and eyes stay steady to the front.</li>
+          <li>Each rear rank boy listens to the number of the boy in front of him and keeps it as his own.</li>
+          <li>If a boy makes a mistake, the instructor gives <strong>AS YOU WERE</strong> and calls out the last correct number. That boy repeats his number and the front rank carries on counting from him.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="view section" id="drill-proving" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#squad-drill">Back to squad drill</a>
+        <h1 class="page-title">Proving</h1>
+        <p class="command">NUMBER SIX—PROVE</p>
+        <p>Proving is how the instructor picks out one boy for a task. The instructor calls his number.</p>
+        <ol class="steps">
+          <li>The boy raises his left forearm so it is level with the ground. The elbow stays still, the palm faces right and the fingers are straight and together.</li>
+          <li>He holds the arm there for a time equal to four quick paces.</li>
+          <li>He then cuts the arm smartly down to his side.</li>
+          <li>If the boy is in the rear rank, the instructor says <strong>NUMBER SIX, REAR RANK—PROVE</strong>.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="view section" id="drill-marching" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#squad-drill">Back to squad drill</a>
+        <h1 class="page-title">Marching in line</h1>
+        <p class="command">SQUAD WILL ADVANCE BY THE RIGHT, QUICK—MARCH</p>
+        <ol class="steps">
+          <li>Every boy steps off together on the command.</li>
+          <li>The guide chooses a point ahead and marches towards it.</li>
+          <li>Everyone else keeps their place in line by glancing towards the guiding flank. They do not turn their heads.</li>
+          <li>A boy who is out of line corrects himself gradually by lengthening or shortening his pace.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="view section" id="drill-retiring" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#squad-drill">Back to squad drill</a>
+        <h1 class="page-title">Retiring</h1>
+        <p class="command">SQUAD WILL RETIRE, ABOUT—TURN</p>
+        <ol class="steps">
+          <li>The squad turns about.</li>
+          <li>The instructor then gives <strong>BY THE LEFT, QUICK—MARCH</strong> and the squad steps off, dressing by the left.</li>
+          <li>If the squad is already marching, the command MARCH is left out.</li>
+          <li>Remember the blank file boy, who always stays in the front rank. See the blank file page.</li>
+        </ol>
+      </div>
+    </article>
+
+    <article class="view section" id="drill-inclining" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#squad-drill">Back to squad drill</a>
+        <h1 class="page-title">Inclining</h1>
+        <p class="command">INCLINE TO THE RIGHT, RIGHT IN—CLINE</p>
+        <p>Inclining moves the whole squad forward on a diagonal while the ranks stay parallel to where they started.</p>
+        <h2 class="page-subtitle">From the halt</h2>
+        <ol class="steps">
+          <li>On the command, the squad turns half right.</li>
+          <li>On <strong>QUICK—MARCH</strong>, each boy steps off, keeping the same place relative to the boy on his right. The line of heads in each rank stays parallel to the original line.</li>
+        </ol>
+        <h2 class="page-subtitle">On the march</h2>
+        <ol class="steps">
+          <li>The command is given on the left foot.</li>
+          <li>Each boy takes a half turn to the right and the squad moves forward on the diagonal.</li>
+        </ol>
+        <h2 class="page-subtitle">Straightening up</h2>
+        <ol class="steps">
+          <li>The command <strong>INCLINE TO THE LEFT, LEFT IN—CLINE</strong> is given on the right foot.</li>
+          <li>Each boy takes a half turn to the left. If the diagonal was marched correctly, the squad is back in line, parallel to the original line.</li>
+        </ol>
+        <p>To incline to the left, swap the words left and right everywhere above.</p>
+      </div>
+    </article>
+
+    <article class="view section" id="drill-obstacles" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#squad-drill">Back to squad drill</a>
+        <h1 class="page-title">Obstacles</h1>
+        <p class="command">MARK—TIME</p>
+        <ol class="steps">
+          <li>When a squad is marching towards a wall or similar obstacle, the instructor gives <strong>MARK—TIME</strong> at least two paces before it.</li>
+          <li>If the command is missed, the squad marks time automatically when the front rank is two paces from the obstacle.</li>
+          <li>On <strong>ABOUT—TURN</strong>, the squad turns about and keeps marking time.</li>
+          <li>To move off again, the command is <strong>FOR—WARD</strong>.</li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Basic drill movements -->
+    <article class="view section" id="basic-movements" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#resources">Back to drill manual</a>
+        <h1 class="page-title">Basic drill movements</h1>
+        <p class="lead">The foundation for all other drill. Practise these until every boy can do them without thinking. This is a simplified guide, so check it against your Brigade's official drill manual.</p>
+
+        <h2 class="page-subtitle">Attention</h2>
+        <p class="command">SQUAD—ATTENTION</p>
+        <ol class="steps">
+          <li>Bring the heels together and turn the feet out at about 45 degrees.</li>
+          <li>Stand straight with the weight evenly on both feet.</li>
+          <li>Hold the arms straight down, hands closed, thumbs along the seams of the trousers.</li>
+          <li>Head up, eyes to the front, no movement.</li>
+        </ol>
+
+        <h2 class="page-subtitle">Stand at ease</h2>
+        <p class="command">STAND AT—EASE</p>
+        <ol class="steps">
+          <li>Move the left foot about 30cm to the left.</li>
+          <li>At the same time bring the hands behind the back, one resting in the other.</li>
+          <li>Keep still and silent, eyes to the front.</li>
+        </ol>
+
+        <h2 class="page-subtitle">Stand easy</h2>
+        <p class="command">STAND—EASY</p>
+        <ol class="steps">
+          <li>From stand at ease, boys relax their posture a little.</li>
+          <li>Boys do not move their feet from where they are unless told.</li>
+          <li>To return, the instructor calls <strong>SQUAD—ATTENTION</strong>.</li>
+        </ol>
+
+        <h2 class="page-subtitle">Turning</h2>
+        <p class="command">RIGHT—TURN, LEFT—TURN, ABOUT—TURN</p>
+        <ol class="steps">
+          <li>Start at attention.</li>
+          <li>On the command, pivot on the heel of one foot and the ball of the other. For a right turn, the pivot foot is the right heel and the left toe.</li>
+          <li>Right and left turns are a quarter turn. About turn is a half turn to the right.</li>
+          <li>Finish by bringing the feet together smartly. Stay at attention.</li>
+        </ol>
+
+        <h2 class="page-subtitle">Marching and halting</h2>
+        <p class="command">QUICK—MARCH, SQUAD—HALT</p>
+        <ol class="steps">
+          <li>Step off with the left foot on the command <strong>MARCH</strong>.</li>
+          <li>A typical quick march pace is about 75cm, at roughly 120 paces a minute. Check the pace your company uses.</li>
+          <li>Swing the arms naturally and keep the head up.</li>
+          <li>On <strong>HALT</strong>, given as the right foot comes forward, the boys take one more pace and bring the feet together.</li>
+        </ol>
+
+        <h2 class="page-subtitle">Marking time</h2>
+        <p class="command">MARK—TIME, FOR—WARD</p>
+        <ol class="steps">
+          <li>Keep raising the knees alternately without moving forward.</li>
+          <li>Keep the arms swinging and the body upright.</li>
+          <li>On <strong>FOR—WARD</strong>, step off again.</li>
+        </ol>
+      </div>
+    </article>
+
+    <!-- Colour drill -->
+    <article class="view section" id="colour-drill" hidden>
+      <div class="wrap">
+        <a class="back-link" href="#resources">Back to drill manual</a>
+        <h1 class="page-title">Colour drill</h1>
+        <p class="lead">The colours are the flag of the company. Handling them is an honour, and the detail of the drill is set by each Brigade.</p>
+        <p>This page is waiting for your Brigade's own colour drill steps. When you have them, they will go here under these headings:</p>
+        <ul class="steps">
+          <li>Who forms the colour party</li>
+          <li>Carrying the colours on the march</li>
+          <li>Dipping or lowering the colours</li>
+          <li>Marching on and off parade</li>
+        </ul>
+      </div>
+    </article>
+
+  </main>
+
+  <footer class="site-footer">
+    <div class="wrap footer-row">
+      <p>&copy; <span id="year">2026</span> The Boys' Brigade Nigeria</p>
+      <p>Advancing Christ's Kingdom among boys</p>
+    </div>
+  </footer>
+
+  <!-- WhatsApp chat button -->
+  <a
+    href="https://wa.me/2347077789754"
+    class="whatsapp"
+    target="_blank"
+    rel="noopener noreferrer"
+    aria-label="Chat with us on WhatsApp"
+  >
+    <svg viewBox="0 0 24 24" aria-hidden="true" xmlns="http://www.w3.org/2000/svg">
+      <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/>
+    </svg>
+  </a>
+
+  <!-- ================= SCRIPTS ================= -->
+
+  <!-- EmailJS v4 -->
+  <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+  <script src="data.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
