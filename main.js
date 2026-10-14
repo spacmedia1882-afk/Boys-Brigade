@@ -11,8 +11,8 @@
   const EMAILJS_SERVICE_ID = "service_jddvkmp";
   const EMAILJS_TEMPLATE_ID = "template_0u94vmg";
 
-  // Shared online leaderboard. Leave empty to keep scores on this device only.
-  const BOARD_URL = "";
+  // Shared online leaderboard (Google Sheet through Apps Script)
+  const BOARD_URL = "https://script.google.com/macros/s/AKfycby3NyrLeCDM-9ZdPUsk698nkjJFElRxzrFWRC8Oi1ubOdT76kmuxIRgcg2Uzny_qWcQ/exec";
   const BOARD_SIZE = 10;
   const PASS_PERCENT = 50;
   const ACTIVE_KEY = "bb-test-active";
