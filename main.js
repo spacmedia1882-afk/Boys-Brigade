@@ -6,6 +6,9 @@
 
   const SITE_NAME = "The Boys' Brigade Nigeria";
 
+  // Time allowed for the whole test, in seconds (180 = 3 minutes)
+  const TIME_LIMIT_SECONDS = 180;
+
   // EmailJS (same account as the church website)
   const EMAILJS_PUBLIC_KEY = "65PVnw82yNxjPY7rA";
   const EMAILJS_SERVICE_ID = "service_jddvkmp";
@@ -354,6 +357,7 @@
     if (BOARD_URL) {
       fetch(BOARD_URL, {
         method: "POST",
+        mode: "no-cors",
         headers: { "Content-Type": "text/plain;charset=utf-8" },
         body: JSON.stringify(entry)
       }).catch(() => { /* offline: the local copy is kept */ });
@@ -461,13 +465,14 @@
     learnWrap.appendChild(homeBoard);
   }
 
-  // ---------- Timed test ----------
+  // ---------- Timed test (countdown) ----------
 
   const test = {
     stage: "start",   // start | running | result | failed
     name: "",
     order: [],
-    index: 0,
+    index: 0,         // question shown on screen
+    answered: 0,      // questions already answered
     score: 0,
     start: 0,
     timerId: null,
@@ -480,6 +485,10 @@
     return Math.round((Date.now() - test.start) / 1000);
   }
 
+  function remaining() {
+    return Math.max(0, TIME_LIMIT_SECONDS - elapsed());
+  }
+
   function stopTimer() {
     if (test.timerId) {
       clearInterval(test.timerId);
@@ -487,11 +496,22 @@
     }
   }
 
+  // Shows the time left. Turns red for the last 30 seconds.
+  function paintClock() {
+    const t = document.getElementById("quiz-timer");
+    if (!t) return;
+    const left = remaining();
+    t.textContent = fmtTime(left);
+    if (t.parentNode) {
+      t.parentNode.style.background = left <= 30 ? "#A3322B" : "";
+    }
+  }
+
   function startTimer() {
     stopTimer();
     test.timerId = setInterval(() => {
-      const t = document.getElementById("quiz-timer");
-      if (t) t.textContent = fmtTime(elapsed());
+      paintClock();
+      if (remaining() <= 0) timeUp();
     }, 250);
   }
 
@@ -507,6 +527,7 @@
     test.name = name;
     test.order = buildQuestions();
     test.index = 0;
+    test.answered = 0;
     test.score = 0;
     test.missed = [];
     test.result = null;
@@ -523,17 +544,29 @@
     renderQuiz();
   }
 
-  function finishTest() {
+  function finishTest(timedOut) {
     stopTimer();
-    const seconds = elapsed();
+    const seconds = timedOut ? TIME_LIMIT_SECONDS : Math.min(elapsed(), TIME_LIMIT_SECONDS);
     unstore(ACTIVE_KEY);
 
     const total = test.order.length;
     saveEntry({ name: test.name, score: test.score, total: total, seconds: seconds, status: "done", at: Date.now() });
 
-    test.result = { score: test.score, total: total, seconds: seconds };
+    test.result = { score: test.score, total: total, seconds: seconds, timedOut: !!timedOut };
     test.stage = "result";
     renderQuiz();
+  }
+
+  // The clock reached zero: unanswered questions count as wrong
+  function timeUp() {
+    if (test.stage !== "running") return;
+
+    test.order.slice(test.answered).forEach((item) => {
+      const right = item.options.find((o) => o.correct);
+      test.missed.push({ q: item.q, yours: "No answer", right: right ? right.text : "", explain: item.explain });
+    });
+
+    finishTest(true);
   }
 
   function abandonTest(reason) {
@@ -594,7 +627,8 @@
 
     const rules = el("ul", "quiz-rules");
     [
-      "The timer starts the moment you press Start test.",
+      "The clock counts down from " + fmtTime(TIME_LIMIT_SECONDS) + " the moment you press Start test.",
+      "When time runs out, the test ends and unanswered questions count as wrong.",
       "You cannot go back. Each answer locks as soon as you pick it.",
       "If you leave the test, switch tabs or apps, refresh or press Back, you fail.",
       "Questions and answers are shuffled every time.",
@@ -644,10 +678,11 @@
     const top = el("div", "quiz-top");
     top.appendChild(el("p", "quiz-count", "Question " + (test.index + 1) + " of " + total));
     const clock = el("p", "quiz-clock");
-    clock.appendChild(el("span", "quiz-clock-label", "Time "));
-    const timer = el("span", "quiz-timer", fmtTime(elapsed()));
+    clock.appendChild(el("span", "quiz-clock-label", "Time left "));
+    const timer = el("span", "quiz-timer", fmtTime(remaining()));
     timer.id = "quiz-timer";
     clock.appendChild(timer);
+    if (remaining() <= 30) clock.style.background = "#A3322B";
     top.appendChild(clock);
     card.appendChild(top);
 
@@ -668,6 +703,7 @@
 
         // Lock every option straight away: no changing the answer
         options.querySelectorAll("button").forEach((b) => { b.disabled = true; });
+        test.answered++;
 
         if (option.correct) {
           test.score++;
@@ -681,7 +717,7 @@
         setTimeout(() => {
           if (test.stage !== "running") return;
           test.index++;
-          if (test.index >= total) finishTest();
+          if (test.index >= total) finishTest(false);
           else renderQuiz();
         }, 700);
       });
@@ -698,9 +734,14 @@
     const passed = pct >= PASS_PERCENT;
 
     const box = el("div", "quiz-result" + (passed ? "" : " is-failed"));
-    box.appendChild(el("p", "quiz-count", passed ? "Test complete" : "Test complete, not passed"));
+
+    let heading = passed ? "Test complete" : "Test complete, not passed";
+    if (r.timedOut) heading = "Time is up";
+    box.appendChild(el("p", "quiz-count", heading));
+
     box.appendChild(el("p", "quiz-score", r.score + " out of " + r.total));
-    box.appendChild(el("p", "quiz-time", "Time: " + fmtTime(r.seconds)));
+    box.appendChild(el("p", "quiz-time",
+      (r.timedOut ? "Time ran out at " : "Time used: ") + fmtTime(r.seconds)));
 
     let message;
     if (r.score === r.total) message = "Perfect score. You are Sure and Steadfast.";
