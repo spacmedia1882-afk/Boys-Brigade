@@ -1,8 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-6968918325674263"
-     crossorigin="anonymous"></script>
+  
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <title>The Boys' Brigade Nigeria</title>
@@ -125,8 +124,8 @@
             <li><a href="#learn-ranks" data-topic="ranks">Ranks<span>From Lance Corporal to Staff Sergeant, and the officers who lead the company</span></a></li>
             <li><a href="#learn-uniform" data-topic="uniform">Uniform<span>Tap each part of the uniform to learn its name and what it means</span></a></li>
             <li><a href="#learn-history" data-topic="history">History<span>The first company, the anchor and cross, and our motto</span></a></li>
-            <li><a href="#learn-quiz">Timed test<span>Ten questions against the clock, with a leaderboard</span></a></li>
-            <li><a href="#learn-flashcards">Flashcards<span>Flip through the key facts to remember them</span></a></li>
+            <li><a href="#learn-quiz">Section tests<span>30 questions per section, timed, one attempt each, with leaderboards</span></a></li>
+            <li><a href="#learn-flashcards">Flashcards<span>Flip through the key notes to remember them</span></a></li>
           </ul>
         </div>
       </section>
@@ -214,6 +213,7 @@
     </div>
 
     <!-- ======================= LEARN PAGES ======================= -->
+    <!-- Each topic page gets its own "Take the ... test" button from main.js -->
 
     <!-- Ranks -->
     <article class="view section" id="learn-ranks" hidden>
@@ -230,7 +230,6 @@
         <div id="officers-list" class="rank-list"></div>
 
         <button type="button" class="btn btn-primary mark-learned" data-topic="ranks">I have learned this</button>
-        <a class="btn btn-outline" href="#learn-quiz">Take the test</a>
       </div>
     </article>
 
@@ -311,7 +310,6 @@
         </div>
 
         <button type="button" class="btn btn-primary mark-learned" data-topic="uniform">I have learned this</button>
-        <a class="btn btn-outline" href="#learn-quiz">Take the test</a>
       </div>
     </article>
 
@@ -325,16 +323,15 @@
         <ol class="timeline" id="history-list"></ol>
 
         <button type="button" class="btn btn-primary mark-learned" data-topic="history">I have learned this</button>
-        <a class="btn btn-outline" href="#learn-quiz">Take the test</a>
       </div>
     </article>
 
-    <!-- Timed test -->
+    <!-- Section tests -->
     <article class="view section" id="learn-quiz" hidden>
       <div class="wrap">
         <a class="back-link" href="#learn">Back to Learn</a>
-        <h1 class="page-title">Timed test</h1>
-        <p class="lead">Ten questions against the clock. Your score and time go on the leaderboard.</p>
+        <h1 class="page-title">Section tests</h1>
+        <p class="lead">Register with your first name, surname and section, then take the timed test. Each test has 30 questions and you can take each one only once. Your score and time go on the leaderboard.</p>
         <div id="quiz-root"></div>
       </div>
     </article>

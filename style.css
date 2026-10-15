@@ -1225,6 +1225,13 @@ ul.steps li::before {
   padding: 2rem;
   cursor: pointer;
   transition: background 0.25s, color 0.25s;
+  animation: flipIn 0.4s ease;
+}
+
+/* The card turns over each time it is pressed */
+@keyframes flipIn {
+  from { transform: perspective(900px) rotateY(90deg); opacity: 0.4; }
+  to   { transform: perspective(900px) rotateY(0deg); opacity: 1; }
 }
 
 .flashcard.is-back {
@@ -1381,6 +1388,74 @@ ul.steps li::before {
   outline-offset: 3px;
 }
 
+/* ---------- Section tests and flip cards (new) ---------- */
+
+.test-cta {
+  max-width: 44rem;
+  margin-top: 3rem;
+  padding: 1.6rem 1.8rem 1.8rem;
+  background: var(--paper-tint);
+  border-left: 5px solid var(--brass);
+  border-radius: 0 var(--radius) var(--radius) 0;
+}
+
+.test-cta h2 {
+  font-size: 1.5rem !important;
+  margin: 0 0 0.4rem !important;
+}
+
+.test-cta p {
+  margin: 0;
+  color: var(--ink-soft);
+}
+
+.view .test-cta .btn {
+  margin: 1.2rem 0 0;
+}
+
+.quiz-card .quiz-name {
+  display: block;
+  margin-bottom: 1.1rem;
+}
+
+.quiz-note {
+  font-family: var(--font-head);
+  font-weight: 600;
+  font-size: 0.95rem;
+  color: var(--ink-soft);
+  margin: 0 0 0.8rem;
+}
+
+.board-section {
+  font-family: var(--font-head);
+  font-weight: 700;
+  font-size: 1rem;
+  color: var(--brass-light);
+  margin: 1.4rem 0 0.4rem;
+}
+
+.flash-filters {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1.4rem;
+}
+
+.flash-filters .btn {
+  margin: 0;
+  padding: 0.5rem 1.1rem;
+  font-size: 0.9rem;
+}
+
+.flash-filters .btn[aria-pressed="true"] {
+  background: var(--green-deep);
+  color: var(--brass-light);
+}
+
+.flash-nav {
+  margin-top: 1.2rem;
+}
+
 /* ---------- Tablet and phone ---------- */
 
 @media (max-width: 860px) {
@@ -1461,5 +1536,5 @@ ul.steps li::before {
 
 @media (prefers-reduced-motion: reduce) {
   html { scroll-behavior: auto; }
-  * { transition: none !important; }
+  * { transition: none !important; animation: none !important; }
 }

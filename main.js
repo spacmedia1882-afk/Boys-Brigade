@@ -6,9 +6,6 @@
 
   const SITE_NAME = "The Boys' Brigade Nigeria";
 
-  // Time allowed for the whole test, in seconds (180 = 3 minutes)
-  const TIME_LIMIT_SECONDS = 180;
-
   // EmailJS (same account as the church website)
   const EMAILJS_PUBLIC_KEY = "65PVnw82yNxjPY7rA";
   const EMAILJS_SERVICE_ID = "service_jddvkmp";
@@ -19,9 +16,19 @@
   const BOARD_SIZE = 10;
   const PASS_PERCENT = 50;
   const ACTIVE_KEY = "bb-test-active";
+  const TAKEN_KEY = "bb-taken";
 
-  const DATA = window.BB_DATA || { ranks: [], officers: [], uniform: [], history: [], quiz: [] };
+  const DATA = window.BB_DATA || { ranks: [], officers: [], uniform: [], history: [], quiz: [], flashcards: [] };
   const TOPICS = ["ranks", "uniform", "history"];
+
+  // Test settings come from data.js (minutes and the list of sections)
+  const TEST_CONFIG = DATA.test || {};
+  const TIME_LIMIT_SECONDS = Math.round((TEST_CONFIG.minutes || 5) * 60);
+  const SECTIONS = TEST_CONFIG.sections || [
+    { id: "ranks", name: "Ranks" },
+    { id: "uniform", name: "Uniform" },
+    { id: "history", name: "History" }
+  ];
 
   // ---------- Small helpers ----------
 
@@ -63,6 +70,15 @@
       a[j] = tmp;
     }
     return a;
+  }
+
+  function sectionName(id) {
+    const found = SECTIONS.find((s) => s.id === id);
+    return found ? found.name : id;
+  }
+
+  function questionsFor(sectionId) {
+    return DATA.quiz.filter((item) => item.topic === sectionId);
   }
 
   // ---------- Footer year ----------
@@ -156,7 +172,7 @@
     if (totalEl) totalEl.textContent = String(TOPICS.length);
     if (fillEl) fillEl.style.width = Math.round((count / TOPICS.length) * 100) + "%";
     if (textEl && count === TOPICS.length) {
-      textEl.textContent = "All topics learned. Now take the test to prove it.";
+      textEl.textContent = "All topics learned. Now take the tests to prove it.";
     }
 
     document.querySelectorAll("a[data-topic]").forEach((link) => {
@@ -181,6 +197,33 @@
       paintProgress();
     });
   });
+
+  // ---------- "Take the test" button at the end of each section ----------
+
+  let pendingSection = null;
+
+  function addTestCta(viewId, sectionId) {
+    const view = document.getElementById(viewId);
+    if (!view) return;
+    if (view.querySelector(".test-cta")) return;
+
+    const count = questionsFor(sectionId).length;
+    const box = el("div", "test-cta");
+    box.appendChild(el("h2", null, "Test yourself: " + sectionName(sectionId)));
+    box.appendChild(el("p", null,
+      count + " questions, " + fmtTime(TIME_LIMIT_SECONDS) + " on the clock. You can take this test only once."));
+
+    const btn = el("button", "btn btn-primary", "Take the " + sectionName(sectionId) + " test");
+    btn.type = "button";
+    btn.addEventListener("click", () => {
+      pendingSection = sectionId;
+      window.location.hash = "learn-quiz";
+    });
+    box.appendChild(btn);
+
+    const wrap = view.querySelector(".wrap") || view;
+    wrap.appendChild(box);
+  }
 
   // ---------- Ranks page ----------
 
@@ -254,6 +297,8 @@
       card.appendChild(body);
       officers.appendChild(card);
     });
+
+    addTestCta("learn-ranks", "ranks");
   }
 
   // ---------- Uniform page ----------
@@ -299,6 +344,8 @@
     });
 
     if (currentPart) setPart(currentPart);
+
+    addTestCta("learn-uniform", "uniform");
   }
 
   document.querySelectorAll(".uniform-figure .part").forEach((node) => {
@@ -325,6 +372,63 @@
       li.appendChild(el("p", "timeline-text", pick(item)));
       list.appendChild(li);
     });
+
+    addTestCta("learn-history", "history");
+  }
+
+  // ---------- Names on the leaderboard ----------
+  // The sheet stores one "name" per row, so the person and the section
+  // are packed together like this:  "John Doe | ranks"
+
+  function cleanPart(text) {
+    return String(text || "").replace(/\|/g, "").replace(/\s+/g, " ").trim();
+  }
+
+  function packName(first, surname, sectionId) {
+    return (cleanPart(first) + " " + cleanPart(surname) + " | " + sectionId).slice(0, 70);
+  }
+
+  function unpackName(raw) {
+    const text = String(raw || "");
+    const i = text.lastIndexOf(" | ");
+    if (i === -1) return { person: text.trim(), section: "" };
+    return { person: text.slice(0, i).trim(), section: text.slice(i + 3).trim() };
+  }
+
+  function personKey(person, sectionId) {
+    return person.toLowerCase().replace(/\s+/g, " ") + "|" + sectionId;
+  }
+
+  // ---------- One attempt only ----------
+
+  function localTaken() {
+    try {
+      const raw = store(TAKEN_KEY);
+      const list = raw ? JSON.parse(raw) : [];
+      return Array.isArray(list) ? list : [];
+    } catch (e) {
+      return [];
+    }
+  }
+
+  function markTaken(key) {
+    const list = localTaken();
+    if (!list.includes(key)) list.push(key);
+    store(TAKEN_KEY, JSON.stringify(list));
+  }
+
+  // Resolves to true if this person has already taken this section's test
+  // (checked on this device first, then on the shared leaderboard).
+  function alreadyTaken(person, sectionId) {
+    const key = personKey(person, sectionId);
+    if (localTaken().includes(key)) return Promise.resolve(true);
+
+    return loadBoard().then((list) =>
+      list.some((entry) => {
+        const u = unpackName(entry.name);
+        return u.section === sectionId && personKey(u.person, u.section) === key;
+      })
+    );
   }
 
   // ---------- Leaderboard ----------
@@ -379,11 +483,14 @@
   function bestPerName(list) {
     const best = {};
     list.forEach((entry) => {
-      const name = String(entry.name || "").trim().slice(0, 24);
-      if (!name) return;
-      const key = name.toLowerCase();
+      const raw = String(entry.name || "").trim().slice(0, 70);
+      if (!raw) return;
+      const u = unpackName(raw);
+      const key = raw.toLowerCase();
       const row = {
-        name: name,
+        name: raw,
+        person: u.person,
+        section: u.section,
         score: Number(entry.score) || 0,
         total: Number(entry.total) || 0,
         seconds: Number(entry.seconds) || 0,
@@ -400,49 +507,62 @@
     return pct >= PASS_PERCENT ? "Passed" : "Failed";
   }
 
+  function buildTable(rows) {
+    const table = el("table", "board-table");
+    const head = el("thead");
+    const headRow = el("tr");
+    ["#", "Name", "Score", "Time", "Result"].forEach((t) => {
+      headRow.appendChild(el("th", null, t));
+    });
+    head.appendChild(headRow);
+    table.appendChild(head);
+
+    const body = el("tbody");
+    rows.forEach((entry, i) => {
+      const tr = el("tr", entry.status === "done" ? "" : "is-failed");
+      const done = entry.status === "done";
+      tr.appendChild(el("td", null, String(i + 1)));
+      tr.appendChild(el("td", "board-name", entry.person));
+      tr.appendChild(el("td", null, done ? entry.score + "/" + entry.total : "-"));
+      tr.appendChild(el("td", null, done ? fmtTime(entry.seconds) : "-"));
+      tr.appendChild(el("td", null, resultLabel(entry)));
+      body.appendChild(tr);
+    });
+    table.appendChild(body);
+
+    const scroller = el("div", "board-scroll");
+    scroller.appendChild(table);
+    return scroller;
+  }
+
   function renderBoardInto(box) {
     clear(box);
-    box.appendChild(el("h3", "board-title", "Leaderboard"));
+    const only = box.dataset.section || "";
+
+    box.appendChild(el("h3", "board-title", "Leaderboard" + (only ? ": " + sectionName(only) : "")));
     box.appendChild(el("p", "board-note",
-      BOARD_URL ? "Shared by everyone who takes the test." : "Scores are saved on this device."));
+      BOARD_URL ? "Shared by everyone who takes the tests." : "Scores are saved on this device."));
 
     const holder = el("div", "board-holder", "Loading...");
     box.appendChild(holder);
 
     loadBoard().then((list) => {
-      const rows = bestPerName(list).slice(0, BOARD_SIZE);
+      const rows = bestPerName(list);
       clear(holder);
 
-      if (rows.length === 0) {
-        holder.appendChild(el("p", "board-empty", "No scores yet. Be the first."));
-        return;
-      }
+      const groups = only ? [{ id: only, name: sectionName(only) }] : SECTIONS.slice();
+      if (!only && rows.some((r) => !r.section)) groups.push({ id: "", name: "Earlier test" });
 
-      const table = el("table", "board-table");
-      const head = el("thead");
-      const headRow = el("tr");
-      ["#", "Name", "Score", "Time", "Result"].forEach((t) => {
-        headRow.appendChild(el("th", null, t));
+      let shown = false;
+      groups.forEach((group) => {
+        const groupRows = rows.filter((r) => r.section === group.id).slice(0, BOARD_SIZE);
+        if (groupRows.length === 0) return;
+        shown = true;
+        if (!only) holder.appendChild(el("h4", "board-section", group.name));
+        holder.appendChild(buildTable(groupRows));
       });
-      head.appendChild(headRow);
-      table.appendChild(head);
 
-      const body = el("tbody");
-      rows.forEach((entry, i) => {
-        const tr = el("tr", entry.status === "done" ? "" : "is-failed");
-        const done = entry.status === "done";
-        tr.appendChild(el("td", null, String(i + 1)));
-        tr.appendChild(el("td", "board-name", entry.name));
-        tr.appendChild(el("td", null, done ? entry.score + "/" + entry.total : "-"));
-        tr.appendChild(el("td", null, done ? fmtTime(entry.seconds) : "-"));
-        tr.appendChild(el("td", null, resultLabel(entry)));
-        body.appendChild(tr);
-      });
-      table.appendChild(body);
-
-      const scroller = el("div", "board-scroll");
-      scroller.appendChild(table);
-      holder.appendChild(scroller);
+      if (!shown) holder.appendChild(el("p", "board-empty", "No scores yet. Be the first."));
     });
   }
 
@@ -450,9 +570,10 @@
     document.querySelectorAll("[data-board]").forEach(renderBoardInto);
   }
 
-  function addBoard(parent) {
+  function addBoard(parent, sectionId) {
     const box = el("div", "leaderboard");
     box.setAttribute("data-board", "");
+    box.dataset.section = sectionId || "";
     parent.appendChild(box);
     renderBoardInto(box);
   }
@@ -462,6 +583,7 @@
   if (learnWrap) {
     const homeBoard = el("div", "leaderboard");
     homeBoard.setAttribute("data-board", "");
+    homeBoard.dataset.section = "";
     learnWrap.appendChild(homeBoard);
   }
 
@@ -469,7 +591,12 @@
 
   const test = {
     stage: "start",   // start | running | result | failed
-    name: "",
+    section: "",
+    first: "",
+    surname: "",
+    person: "",
+    packed: "",
+    key: "",
     order: [],
     index: 0,         // question shown on screen
     answered: 0,      // questions already answered
@@ -515,17 +642,23 @@
     }, 250);
   }
 
-  function buildQuestions() {
-    return shuffle(DATA.quiz).map((item) => ({
+  function buildQuestions(sectionId) {
+    return shuffle(questionsFor(sectionId)).map((item) => ({
       q: item.q,
       explain: item.explain,
       options: shuffle(item.options.map((text, i) => ({ text: text, correct: i === item.answer })))
     }));
   }
 
-  function startTest(name) {
-    test.name = name;
-    test.order = buildQuestions();
+  function startTest(first, surname, sectionId) {
+    test.section = sectionId;
+    test.first = cleanPart(first);
+    test.surname = cleanPart(surname);
+    test.person = test.first + " " + test.surname;
+    test.packed = packName(test.first, test.surname, sectionId);
+    test.key = personKey(test.person, sectionId);
+
+    test.order = buildQuestions(sectionId);
     test.index = 0;
     test.answered = 0;
     test.score = 0;
@@ -535,10 +668,15 @@
     test.start = Date.now();
     test.stage = "running";
 
-    store("bb-name", name);
+    store("bb-first", test.first);
+    store("bb-surname", test.surname);
+
+    // The attempt counts from this moment, even if the page is closed.
+    markTaken(test.key);
+
     // If the page is closed or reloaded mid-test, this marker is found
     // on the next load and the test is recorded as failed.
-    store(ACTIVE_KEY, JSON.stringify({ name: name, total: test.order.length }));
+    store(ACTIVE_KEY, JSON.stringify({ packed: test.packed, total: test.order.length }));
 
     startTimer();
     renderQuiz();
@@ -550,7 +688,15 @@
     unstore(ACTIVE_KEY);
 
     const total = test.order.length;
-    saveEntry({ name: test.name, score: test.score, total: total, seconds: seconds, status: "done", at: Date.now() });
+    saveEntry({
+      name: test.packed,
+      section: test.section,
+      score: test.score,
+      total: total,
+      seconds: seconds,
+      status: "done",
+      at: Date.now()
+    });
 
     test.result = { score: test.score, total: total, seconds: seconds, timedOut: !!timedOut };
     test.stage = "result";
@@ -574,7 +720,15 @@
     stopTimer();
     unstore(ACTIVE_KEY);
 
-    saveEntry({ name: test.name, score: 0, total: test.order.length, seconds: 0, status: "left", at: Date.now() });
+    saveEntry({
+      name: test.packed,
+      section: test.section,
+      score: 0,
+      total: test.order.length,
+      seconds: 0,
+      status: "left",
+      at: Date.now()
+    });
 
     test.stage = "failed";
     test.notice = reason;
@@ -588,7 +742,7 @@
     try {
       const info = JSON.parse(raw);
       saveEntry({
-        name: String(info.name || "Unknown").slice(0, 24),
+        name: String(info.packed || "Unknown | ").slice(0, 70),
         score: 0,
         total: Number(info.total) || 0,
         seconds: 0,
@@ -615,6 +769,7 @@
     }
   });
 
+  // Small registration form shown before every test
   function renderStart(root) {
     const card = el("div", "quiz-card");
 
@@ -623,7 +778,7 @@
       test.notice = "";
     }
 
-    card.appendChild(el("h2", "quiz-question", "Ready for the test?"));
+    card.appendChild(el("h2", "quiz-question", "Register for the test"));
 
     const rules = el("ul", "quiz-rules");
     [
@@ -631,22 +786,71 @@
       "When time runs out, the test ends and unanswered questions count as wrong.",
       "You cannot go back. Each answer locks as soon as you pick it.",
       "If you leave the test, switch tabs or apps, refresh or press Back, you fail.",
-      "Questions and answers are shuffled every time.",
+      "You can take each section's test only once. No second attempt.",
       "Your name, score and time go on the leaderboard."
     ].forEach((text) => rules.appendChild(el("li", null, text)));
     card.appendChild(rules);
 
-    const label = el("label", "quiz-label", "Your name");
-    label.setAttribute("for", "quiz-name");
-    card.appendChild(label);
+    // First name
+    const firstLabel = el("label", "quiz-label", "First name");
+    firstLabel.setAttribute("for", "quiz-first");
+    card.appendChild(firstLabel);
 
-    const input = el("input", "quiz-name");
-    input.id = "quiz-name";
-    input.type = "text";
-    input.maxLength = 20;
-    input.autocomplete = "name";
-    input.value = store("bb-name") || "";
-    card.appendChild(input);
+    const firstInput = el("input", "quiz-name");
+    firstInput.id = "quiz-first";
+    firstInput.type = "text";
+    firstInput.maxLength = 20;
+    firstInput.autocomplete = "given-name";
+    firstInput.value = store("bb-first") || "";
+    card.appendChild(firstInput);
+
+    // Surname
+    const surLabel = el("label", "quiz-label", "Surname");
+    surLabel.setAttribute("for", "quiz-surname");
+    card.appendChild(surLabel);
+
+    const surInput = el("input", "quiz-name");
+    surInput.id = "quiz-surname";
+    surInput.type = "text";
+    surInput.maxLength = 20;
+    surInput.autocomplete = "family-name";
+    surInput.value = store("bb-surname") || "";
+    card.appendChild(surInput);
+
+    // Section
+    const secLabel = el("label", "quiz-label", "Section");
+    secLabel.setAttribute("for", "quiz-section");
+    card.appendChild(secLabel);
+
+    const select = el("select", "quiz-name");
+    select.id = "quiz-section";
+    const blank = el("option", null, "Choose a section");
+    blank.value = "";
+    select.appendChild(blank);
+    SECTIONS.forEach((s) => {
+      const opt = el("option", null, s.name);
+      opt.value = s.id;
+      select.appendChild(opt);
+    });
+    if (pendingSection) {
+      select.value = pendingSection;
+      pendingSection = null;
+    }
+    card.appendChild(select);
+
+    const info = el("p", "quiz-note");
+    card.appendChild(info);
+
+    function updateInfo() {
+      if (!select.value) {
+        info.textContent = "";
+        return;
+      }
+      info.textContent = questionsFor(select.value).length + " questions in " +
+        fmtTime(TIME_LIMIT_SECONDS) + ".";
+    }
+    select.addEventListener("change", updateInfo);
+    updateInfo();
 
     const status = el("p", "quiz-feedback bad");
     status.setAttribute("role", "status");
@@ -655,18 +859,47 @@
     const go = el("button", "btn btn-primary", "Start test");
     go.type = "button";
     go.addEventListener("click", () => {
-      const name = input.value.trim().replace(/\s+/g, " ");
-      if (name.length < 2) {
-        status.textContent = "Please type your name first.";
-        input.focus();
+      const first = cleanPart(firstInput.value);
+      const surname = cleanPart(surInput.value);
+      const sectionId = select.value;
+
+      if (first.length < 2) {
+        status.textContent = "Please type your first name.";
+        firstInput.focus();
         return;
       }
-      startTest(name);
+      if (surname.length < 2) {
+        status.textContent = "Please type your surname.";
+        surInput.focus();
+        return;
+      }
+      if (!sectionId) {
+        status.textContent = "Please choose a section.";
+        select.focus();
+        return;
+      }
+      if (questionsFor(sectionId).length === 0) {
+        status.textContent = "This section has no questions yet.";
+        return;
+      }
+
+      go.disabled = true;
+      status.textContent = "Checking...";
+
+      alreadyTaken(first + " " + surname, sectionId).then((taken) => {
+        if (taken) {
+          go.disabled = false;
+          status.textContent = first + " " + surname + " has already taken the " +
+            sectionName(sectionId) + " test. Each person can take it only once.";
+          return;
+        }
+        startTest(first, surname, sectionId);
+      });
     });
     card.appendChild(go);
 
     root.appendChild(card);
-    addBoard(root);
+    addBoard(root, "");
   }
 
   function renderRunning(root) {
@@ -676,7 +909,8 @@
     const card = el("div", "quiz-card");
 
     const top = el("div", "quiz-top");
-    top.appendChild(el("p", "quiz-count", "Question " + (test.index + 1) + " of " + total));
+    top.appendChild(el("p", "quiz-count",
+      sectionName(test.section) + ": question " + (test.index + 1) + " of " + total));
     const clock = el("p", "quiz-clock");
     clock.appendChild(el("span", "quiz-clock-label", "Time left "));
     const timer = el("span", "quiz-timer", fmtTime(remaining()));
@@ -728,6 +962,20 @@
     root.appendChild(card);
   }
 
+  function addExitButtons(box) {
+    const another = el("button", "btn btn-primary", "Take another section's test");
+    another.type = "button";
+    another.addEventListener("click", () => {
+      test.stage = "start";
+      renderQuiz();
+    });
+    box.appendChild(another);
+
+    const back = el("a", "btn btn-outline", "Back to Learn");
+    back.href = "#learn";
+    box.appendChild(back);
+  }
+
   function renderResult(root) {
     const r = test.result;
     const pct = r.total ? Math.round((r.score / r.total) * 100) : 0;
@@ -737,7 +985,7 @@
 
     let heading = passed ? "Test complete" : "Test complete, not passed";
     if (r.timedOut) heading = "Time is up";
-    box.appendChild(el("p", "quiz-count", heading));
+    box.appendChild(el("p", "quiz-count", heading + " - " + sectionName(test.section) + " - " + test.person));
 
     box.appendChild(el("p", "quiz-score", r.score + " out of " + r.total));
     box.appendChild(el("p", "quiz-time",
@@ -746,7 +994,7 @@
     let message;
     if (r.score === r.total) message = "Perfect score. You are Sure and Steadfast.";
     else if (passed) message = "Well done. You passed.";
-    else message = "The pass mark is " + PASS_PERCENT + " percent. Read the topics again and try once more.";
+    else message = "The pass mark is " + PASS_PERCENT + " percent. Read the topic again with the flip cards. You cannot retake this test.";
     box.appendChild(el("p", null, message));
 
     if (test.missed.length > 0) {
@@ -762,41 +1010,22 @@
       box.appendChild(list);
     }
 
-    const again = el("button", "btn btn-primary", "Try again");
-    again.type = "button";
-    again.addEventListener("click", () => {
-      test.stage = "start";
-      renderQuiz();
-    });
-    box.appendChild(again);
-
-    const back = el("a", "btn btn-outline", "Back to Learn");
-    back.href = "#learn";
-    box.appendChild(back);
+    addExitButtons(box);
 
     root.appendChild(box);
-    addBoard(root);
+    addBoard(root, test.section);
   }
 
   function renderFailed(root) {
     const box = el("div", "quiz-result is-failed");
     box.appendChild(el("p", "quiz-score", "Test failed"));
     box.appendChild(el("p", null, test.notice || "You left the test, so it was marked as failed."));
+    box.appendChild(el("p", null, "This test cannot be taken again."));
 
-    const again = el("button", "btn btn-primary", "Try again");
-    again.type = "button";
-    again.addEventListener("click", () => {
-      test.stage = "start";
-      renderQuiz();
-    });
-    box.appendChild(again);
-
-    const back = el("a", "btn btn-outline", "Back to Learn");
-    back.href = "#learn";
-    box.appendChild(back);
+    addExitButtons(box);
 
     root.appendChild(box);
-    addBoard(root);
+    addBoard(root, test.section);
 
     // The failure has been shown once. Next visit starts fresh.
     test.notice = "";
@@ -819,10 +1048,16 @@
     else renderStart(root);
   }
 
-  // ---------- Flashcards ----------
+  // ---------- Flip cards (key notes) ----------
 
+  let flashTopic = "all";
   let flashIndex = 0;
   let flashBack = false;
+
+  function flashDeck() {
+    const all = DATA.flashcards || [];
+    return flashTopic === "all" ? all : all.filter((c) => c.topic === flashTopic);
+  }
 
   function renderFlash(restart) {
     const root = document.getElementById("flash-root");
@@ -833,25 +1068,46 @@
     }
     clear(root);
 
-    const cards = DATA.quiz;
-    if (cards.length === 0) {
-      root.appendChild(el("p", null, "No cards yet. Add some questions in data.js."));
+    if (!DATA.flashcards || DATA.flashcards.length === 0) {
+      root.appendChild(el("p", null, "No cards yet. Add some in data.js."));
       return;
     }
 
+    // Topic buttons
+    const filters = el("div", "flash-filters");
+    [{ id: "all", name: "All" }].concat(SECTIONS).forEach((s) => {
+      const b = el("button", "btn btn-outline", s.name);
+      b.type = "button";
+      b.setAttribute("aria-pressed", String(flashTopic === s.id));
+      b.addEventListener("click", () => {
+        flashTopic = s.id;
+        flashIndex = 0;
+        flashBack = false;
+        renderFlash();
+      });
+      filters.appendChild(b);
+    });
+    root.appendChild(filters);
+
+    const cards = flashDeck();
+    if (cards.length === 0) {
+      root.appendChild(el("p", null, "No cards in this topic yet."));
+      return;
+    }
+    if (flashIndex >= cards.length) flashIndex = 0;
+
     const item = cards[flashIndex];
-    root.appendChild(el("p", "quiz-count", "Card " + (flashIndex + 1) + " of " + cards.length));
+    root.appendChild(el("p", "quiz-count", sectionName(item.topic) + ": card " + (flashIndex + 1) + " of " + cards.length));
 
     const card = el("button", "flashcard" + (flashBack ? " is-back" : ""));
     card.type = "button";
     card.setAttribute("aria-label", flashBack ? "Answer. Press to see the question." : "Question. Press to see the answer.");
     if (flashBack) {
       card.appendChild(el("span", "flash-label", "Answer"));
-      card.appendChild(el("span", "flash-main", item.options[item.answer]));
-      card.appendChild(el("span", "flash-sub", item.explain));
+      card.appendChild(el("span", "flash-main", item.back));
     } else {
       card.appendChild(el("span", "flash-label", "Question"));
-      card.appendChild(el("span", "flash-main", item.q));
+      card.appendChild(el("span", "flash-main", item.front));
       card.appendChild(el("span", "flash-sub", "Press to flip"));
     }
     card.addEventListener("click", () => {
@@ -872,6 +1128,15 @@
       renderFlash();
     });
 
+    const shuffleBtn = el("button", "btn btn-outline", "Shuffle");
+    shuffleBtn.type = "button";
+    shuffleBtn.addEventListener("click", () => {
+      DATA.flashcards = shuffle(DATA.flashcards);
+      flashIndex = 0;
+      flashBack = false;
+      renderFlash();
+    });
+
     const nextBtn = el("button", "btn btn-primary", "Next");
     nextBtn.type = "button";
     nextBtn.addEventListener("click", () => {
@@ -881,6 +1146,7 @@
     });
 
     nav.appendChild(prev);
+    nav.appendChild(shuffleBtn);
     nav.appendChild(nextBtn);
     root.appendChild(nav);
   }
